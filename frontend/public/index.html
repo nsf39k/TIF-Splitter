@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTIFF to PNG Tiles</title>
+</head>
+<body>
+    <h1>GeoTIFF to PNG Tiles</h1>
+    
+    <form id="upload-form" enctype="multipart/form-data">
+        <label for="file">Select a GeoTIFF file:</label>
+        <input type="file" id="file" name="file" accept=".tiff,.tif">
+        <button type="submit">Upload and process</button>
+    </form>
+    <br>
+    <button id="download-btn" disabled>Download PNG Tiles</button>
+
+    <script>
+        const uploadForm = document.getElementById('upload-form');
+        const downloadBtn = document.getElementById('download-btn');
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                downloadBtn.disabled = false;
+                alert('File uploaded and processed successfully');
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.error}`);
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            window.location.href = '/download';
+        });
+    </script>
+</body>
+</html>
